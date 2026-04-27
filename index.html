@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sahayak AI — Connecting Help to Where It's Needed Most</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="scrollProgress"></div>
+<canvas id="particles-canvas"></canvas> 
+
+<!-- ══════ NAVBAR ══════ -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a class="nav-logo" onclick="showPage('home')">
+  <img src="logo.jpeg" alt="Sahayak AI Logo" class="logo-img">
+  <span>Sahayak <em>AI</em></span>
+</a>
+    <div class="nav-links" id="navLinks">
+      <a class="nav-link active" data-page="home"    onclick="showPage('home')">Home</a>
+      <a class="nav-link"        data-page="about"   onclick="showPage('about')">About</a>
+      <a class="nav-link"        data-page="map"     onclick="showPage('map')">Live Map</a>
+      <a class="nav-link"        data-page="contact" onclick="showPage('contact')">Contact</a>
+      <div class="nav-divider"></div>
+      <a class="nav-link"        data-page="login"    id="loginNavLink"    onclick="showPage('login')">Login</a>
+      <a class="nav-btn-outline"                      id="registerNavLink"  onclick="showPage('register')">Register</a>
+      <a class="nav-btn-solid"                        id="dashboardNavLink" onclick="showPage('dashboard')" style="display:none">Dashboard</a>
+      <button class="nav-btn-logout"                  id="logoutNavLink"    onclick="handleLogout()" style="display:none">⏏ Logout</button>
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme"><span class="theme-icon">🌙</span></button>
+    </div>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ══════════════ HOME ══════════════ -->
+<div id="page-home" class="page active">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge animate-fadeup">🇮🇳 Built for Bharat</div>
+      <h1 class="hero-title animate-fadeup delay-1">
+        Connecting Help<br><span class="gradient-text">to Where It's</span><br>Needed Most
+      </h1>
+      <p class="hero-sub animate-fadeup delay-2">
+        An AI-powered platform bridging citizens, volunteers, NGOs, donors, and government — delivering real impact through smart coordination.
+      </p>
+      <div class="hero-cta animate-fadeup delay-3">
+        <button class="btn-primary" onclick="showPage('register')">
+          <span>Request Help</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <button class="btn-ghost" onclick="showPage('register')">Become a Volunteer</button>
+      </div>
+      <div class="hero-stats animate-fadeup delay-4">
+        <div class="stat-pill"><strong id="c1">0</strong><span>Requests Resolved</span></div>
+        <div class="stat-pill"><strong id="c2">0</strong><span>Active Volunteers</span></div>
+        <div class="stat-pill"><strong id="c3">0</strong><span>NGO Partners</span></div>
+      </div>
+    </div>
+    <div class="hero-visual animate-fadein delay-2">
+      <div class="hero-card-stack">
+        <!-- Clickable hero cards -->
+        <div class="floating-card card-1" onclick="openHeroModal('medical')">
+          <div class="fc-icon">🚨</div>
+          <div><div class="fc-title">Medical Help Needed</div><div class="fc-sub">Prayagraj • Urgent</div></div>
+          <div class="fc-status urgent">Urgent</div>
+        </div>
+        <div class="floating-card card-2" onclick="openHeroModal('food')">
+          <div class="fc-icon">✅</div>
+          <div><div class="fc-title">Food Distributed</div><div class="fc-sub">Varanasi • Done</div></div>
+          <div class="fc-status resolved">Resolved</div>
+        </div>
+        <div class="floating-card card-3" onclick="openHeroModal('volunteer')">
+          <div class="fc-icon">👤</div>
+          <div><div class="fc-title">Volunteer Matched</div><div class="fc-sub">Lucknow • Active</div></div>
+          <div class="fc-status active">Active</div>
+        </div>
+        <!-- Mini Interactive Map -->
+        <div class="hero-map-preview" onclick="showPage('map')" title="Click to open Live Map">
+          <div class="hero-map-label">🗺️ Live Map — Click to Explore</div>
+          <div class="map-dot" style="top:28%;left:38%"><div class="pulse"></div><div class="map-tooltip">🍛 Food · Prayagraj</div></div>
+          <div class="map-dot" style="top:52%;left:62%"><div class="pulse p2"></div><div class="map-tooltip">💊 Medical · Varanasi</div></div>
+          <div class="map-dot" style="top:68%;left:28%"><div class="pulse p3"></div><div class="map-tooltip">🤝 Volunteer · Kanpur</div></div>
+          <div class="map-dot urgent-dot" style="top:42%;left:52%"><div class="pulse urgent-pulse"></div><div class="map-tooltip">⚡ Emergency · Lucknow</div></div>
+          <div class="map-dot" style="top:20%;left:55%"><div class="pulse p2"></div><div class="map-tooltip">🏠 Shelter · Agra</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section features-section">
+    <div class="section-label">What We Offer</div>
+    <h2 class="section-title">Built for Every Role in Society</h2>
+    <div class="features-grid">
+      <div class="feature-card" onclick="showPage('requesthelp')"><div class="feature-icon">🆘</div><h3>Request Help</h3><p>Citizens raise help requests with location, type, and urgency — visible to nearby volunteers and NGOs instantly.</p></div>
+      <div class="feature-card" onclick="showPage('register')"><div class="feature-icon">🤝</div><h3>Volunteer Matching</h3><p>AI-powered smart matching connects volunteers to the most relevant open requests in their area in real-time.</p></div>
+      <div class="feature-card" onclick="showPage('map')"><div class="feature-icon">🗺️</div><h3>Live Needs Map</h3><p>Interactive map showing live help requests, volunteer positions, and NGO coverage zones across the region.</p></div>
+      <div class="feature-card" onclick="showPage('donate')"><div class="feature-icon">💰</div><h3>Transparent Donations</h3><p>Donors track exactly where their contribution goes — from pledge to real-world impact with full transparency.</p></div>
+      <div class="feature-card" onclick="showPage('login')"><div class="feature-icon">🏛️</div><h3>Government Dashboard</h3><p>Officials get analytics-first view for approval workflows, resource allocation, and district-level planning.</p></div>
+      <div class="feature-card"><div class="feature-icon">🧠</div><h3>AI Insights</h3><p>Predictive analytics surface emerging community needs, at-risk zones, and optimize resource deployment.</p></div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="howitworks-section">
+    <div class="section-label" style="padding:0 1.5rem;display:block;max-width:1100px;margin:0 auto">The Process</div>
+    <h2 class="section-title" style="padding:0 1.5rem;max-width:1100px;margin:.5rem auto 2rem">How Sahayak AI Works</h2>
+    <div class="steps-container">
+      <div class="step"><div class="step-num">01</div><div class="step-content"><h3>Register & Set Role</h3><p>Join as Citizen, Volunteer, Donor, NGO, or Government official. Your dashboard adapts to your role.</p></div></div>
+      <div class="step-arrow">→</div>
+      <div class="step"><div class="step-num">02</div><div class="step-content"><h3>Submit or Browse Needs</h3><p>Citizens raise requests. Volunteers, NGOs, and Donors browse open needs filtered by urgency and proximity.</p></div></div>
+      <div class="step-arrow">→</div>
+      <div class="step"><div class="step-num">03</div><div class="step-content"><h3>AI Matches & Coordinates</h3><p>Smart matching assigns the right help to the right need. Status updates flow to everyone involved.</p></div></div>
+      <div class="step-arrow">→</div>
+      <div class="step"><div class="step-num">04</div><div class="step-content"><h3>Track Impact</h3><p>Every resolved request, donation, and volunteer action is logged and contributes to community stats.</p></div></div>
+    </div>
+  </section>
+
+  <!-- ARTICLES -->
+  <section class="section articles-section">
+    <div class="section-label">Updates</div>
+    <h2 class="section-title">Latest From the Field</h2>
+    <div class="articles-grid">
+      <div class="article-card large" onclick="openArticle('flood')">
+        <div class="article-img" style="background:linear-gradient(135deg,#4f46e5,#7c3aed)">
+          <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=600&q=80" alt="Flood relief" style="width:100%;height:100%;object-fit:cover;opacity:.7">
+        </div>
+        <div class="article-body">
+          <div class="article-tag">Community</div>
+          <h3>Flood Relief in Eastern UP: 2,000 Families Reached</h3>
+          <p>Sahayak AI coordinated 300+ volunteers and 12 NGO partners to deliver food and medical aid in record time.</p>
+          <div class="article-meta">April 2026 • Prayagraj District <span class="read-more">Read More →</span></div>
+        </div>
+      </div>
+      <div class="article-card" onclick="openArticle('medical')">
+        <div class="article-img" style="background:linear-gradient(135deg,#22c55e,#16a34a)">
+          <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&q=80" alt="Medical" style="width:100%;height:100%;object-fit:cover;opacity:.7">
+        </div>
+        <div class="article-body">
+          <div class="article-tag">Health</div>
+          <h3>Mobile Medical Camps Enabled by NGO Network</h3>
+          <p>Platform connected 5 NGOs to run 30 camps across rural areas.</p>
+          <div class="article-meta">March 2026 <span class="read-more">Read More →</span></div>
+        </div>
+      </div>
+      <div class="article-card" onclick="openArticle('education')">
+        <div class="article-img" style="background:linear-gradient(135deg,#f59e0b,#d97706)">
+          <img src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=400&q=80" alt="Education" style="width:100%;height:100%;object-fit:cover;opacity:.7">
+        </div>
+        <div class="article-body">
+          <div class="article-tag">Education</div>
+          <h3>1,500 Students Received School Kits via Donors</h3>
+          <p>Transparent donor tracking built trust and increased contributions by 40%.</p>
+          <div class="article-meta">February 2026 <span class="read-more">Read More →</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-inner">
+      <h2>Ready to make a difference?</h2>
+      <p>Join thousands of volunteers, donors, and NGOs already using Sahayak AI.</p>
+      <div class="cta-btns">
+        <button class="btn-primary" style="background:#fff;color:var(--primary)" onclick="showPage('register')">Get Started Free</button>
+        <button class="btn-ghost-white" onclick="showPage('about')">Learn More</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo"><div class="logo-icon">S</div> Sahayak AI</div>
+        <p>An AI-powered volunteer and resource coordination platform for social impact across India.</p>
+        <div class="social-links">
+          <a href="https://twitter.com" target="_blank" class="social-link" title="Twitter/X">𝕏</a>
+          <a href="https://linkedin.com" target="_blank" class="social-link" title="LinkedIn">in</a>
+          <a href="https://facebook.com" target="_blank" class="social-link" title="Facebook">f</a>
+          <a href="https://youtube.com" target="_blank" class="social-link" title="YouTube">▶</a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <a onclick="showPage('home')">Home</a>
+          <a onclick="showPage('map')">Live Map</a>
+          <a onclick="showPage('donate')">Donate</a>
+          <a onclick="showPage('dashboard')">Dashboard</a>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a onclick="showPage('about')">About Us</a>
+          <a onclick="showPage('contact')">Contact</a>
+          <a onclick="openLegalModal('privacy')">Privacy Policy</a>
+          <a onclick="openLegalModal('terms')">Terms of Service</a>
+        </div>
+        <div class="footer-col">
+          <h4>For Users</h4>
+          <a onclick="showPage('register')">Register</a>
+          <a onclick="showPage('login')">Login</a>
+          <a onclick="showPage('requesthelp')">Request Help</a>
+          <a onclick="showPage('admin')">Admin Panel</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>Built with ❤️ by Team Sahayak AI · 2026</span>
+      <span>All rights reserved</span>
+    </div>
+  </footer>
+</div>
+
+<!-- ══════════════ LOGIN ══════════════ -->
+<div id="page-login" class="page">
+  <div class="auth-page">
+    <div class="auth-visual">
+      <div class="auth-visual-content">
+        <div class="logo-icon large">S</div>
+        <h2>Welcome Back</h2>
+        <p>Continue your journey of creating impact across communities.</p>
+        <div class="auth-stats">
+          <div><strong>12,400+</strong><span>Active Users</span></div>
+          <div><strong>89%</strong><span>Requests Resolved</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="auth-form-panel">
+      <div class="auth-form-inner">
+        <h2>Sign In</h2>
+        <p class="auth-sub">No account? <a onclick="showPage('register')">Register here</a></p>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="loginEmail" placeholder="you@example.com" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" class="form-input" onkeydown="if(event.key==='Enter')handleLogin()">
+        </div>
+        <div class="form-row-space">
+          <label class="checkbox-label"><input type="checkbox"> Remember me</label>
+          <a class="link-small" onclick="showToast('Password reset link sent to your email!','success')">Forgot password?</a>
+        </div>
+        <button class="btn-primary full" onclick="handleLogin()">Sign In</button>
+        <div class="auth-divider"><span>Demo Accounts</span></div>
+        <div class="demo-accounts">
+          <div class="demo-row" onclick="fillDemo('citizen@test.com','test123')"><span>👤 Citizen</span><span class="demo-cred">citizen@test.com / test123</span></div>
+          <div class="demo-row" onclick="fillDemo('volunteer@test.com','test123')"><span>🤝 Volunteer</span><span class="demo-cred">volunteer@test.com / test123</span></div>
+          <div class="demo-row" onclick="fillDemo('donor@test.com','test123')"><span>💰 Donor</span><span class="demo-cred">donor@test.com / test123</span></div>
+          <div class="demo-row" onclick="fillDemo('ngo@test.com','test123')"><span>🏢 NGO</span><span class="demo-cred">ngo@test.com / test123</span></div>
+          <div class="demo-row" onclick="fillDemo('govt@test.com','test123')"><span>🏛️ Govt</span><span class="demo-cred">govt@test.com / test123</span></div>
+          <div class="demo-row admin" onclick="fillDemo('admin@sahayak.ai','admin123')"><span>🛡️ Admin</span><span class="demo-cred">admin@sahayak.ai / admin123</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ REGISTER ══════════════ -->
+<div id="page-register" class="page">
+  <div class="auth-page">
+    <div class="auth-visual register-visual">
+      <div class="auth-visual-content">
+        <div class="logo-icon large">S</div>
+        <h2>Join the Mission</h2>
+        <p>Together we can build a stronger, more resilient community for everyone.</p>
+        <div class="role-preview">
+          <div class="role-chip">👤 Citizen</div>
+          <div class="role-chip">🤝 Volunteer</div>
+          <div class="role-chip">🏢 NGO</div>
+          <div class="role-chip">💰 Donor</div>
+          <div class="role-chip">🏛️ Government</div>
+        </div>
+      </div>
+    </div>
+    <div class="auth-form-panel">
+      <div class="auth-form-inner">
+        <h2>Create Account</h2>
+        <p class="auth-sub">Already have one? <a onclick="showPage('login')">Sign in</a></p>
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input type="text" id="regFirst" placeholder="Rahul" class="form-input"></div>
+          <div class="form-group"><label>Last Name</label><input type="text" id="regLast" placeholder="Sharma" class="form-input"></div>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="regEmail" placeholder="you@example.com" class="form-input">
+          <div id="emailError" class="field-error"></div>
+        </div>
+        <div class="form-group"><label>Phone Number</label><input type="tel" id="regPhone" placeholder="+91 98765 43210" class="form-input"></div>
+        <div class="form-group">
+          <label>Your Role</label>
+          <select id="regRole" class="form-input">
+            <option value="">Select your role...</option>
+            <option value="citizen">👤 Citizen</option>
+            <option value="volunteer">🤝 Volunteer</option>
+            <option value="ngo">🏢 NGO Representative</option>
+            <option value="donor">💰 Donor</option>
+            <option value="government">🏛️ Government Official</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="regPassword" placeholder="Min 6 characters" class="form-input" oninput="checkPwStrength(this.value)">
+          <div class="pw-strength-bar"><div id="pwStrength" class="pw-fill"></div></div>
+          <div id="pwLabel" class="pw-label"></div>
+        </div>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="regTerms"> I agree to the <a onclick="openLegalModal('terms')">Terms</a> &amp; <a onclick="openLegalModal('privacy')">Privacy Policy</a>
+          </label>
+        </div>
+        <button class="btn-primary full" onclick="handleRegister()">Create My Account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ DASHBOARD ══════════════ -->
+<div id="page-dashboard" class="page">
+  <div class="dashboard-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo"><div class="logo-icon sm">S</div><span>Sahayak AI</span></div>
+      <nav class="sidebar-nav" id="sidebarNav"></nav>
+      <div class="sidebar-user" id="sidebarUser">
+        <div class="user-avatar" id="sidebarAvatar">?</div>
+        <div class="user-info">
+          <div class="user-name" id="sidebarName">Guest</div>
+          <div class="user-role" id="sidebarRole">—</div>
+        </div>
+        <button class="sidebar-logout-btn" onclick="handleLogout()" title="Logout">⏏</button>
+      </div>
+    </aside>
+    <main class="dashboard-main">
+      <div class="dash-topbar">
+        <div>
+          <h1 class="dash-title" id="dashTitle">Dashboard</h1>
+          <p class="dash-sub" id="dashSub">Welcome back</p>
+        </div>
+        <div class="dash-topbar-right">
+          <div class="notif-trigger" onclick="toggleNotifications()">
+            🔔<span class="notif-badge" id="notifBadge">4</span>
+          </div>
+          <button class="btn-sm-primary" onclick="showPage('requesthelp')">+ New Request</button>
+        </div>
+      </div>
+      <div id="dashboardContent"></div>
+    </main>
+  </div>
+  <div class="notif-panel" id="notifPanel">
+    <div class="notif-header"><strong>Notifications</strong><button onclick="toggleNotifications()">×</button></div>
+    <div class="notif-list" id="notifList"></div>
+  </div>
+</div>
+
+<!-- ══════════════ REQUEST HELP ══════════════ -->
+<div id="page-requesthelp" class="page">
+  <div class="inner-page">
+    <div class="inner-header">
+      <button class="back-btn" onclick="history.go(-1)||showPage('dashboard')">← Back</button>
+      <h1>Request Help</h1>
+      <p>Submit your need — we'll connect you with nearby help immediately.</p>
+    </div>
+    <div class="request-form-card">
+      <div class="form-section">
+        <h3>📋 Request Details</h3>
+        <div class="form-group">
+          <label>Type of Help Needed</label>
+          <select id="reqType" class="form-input">
+            <option value="">Select category...</option>
+            <option>🍛 Food &amp; Nutrition</option>
+            <option>💊 Medical Assistance</option>
+            <option>🏠 Shelter &amp; Housing</option>
+            <option>📚 Education Support</option>
+            <option>👕 Clothing &amp; Essentials</option>
+            <option>💧 Water &amp; Sanitation</option>
+            <option>⚡ Emergency Rescue</option>
+            <option>🧸 Child Welfare</option>
+            <option>👴 Elder Care</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Describe Your Need</label>
+          <textarea id="reqDesc" class="form-input" rows="4" placeholder="Explain what help you need, how many people are affected..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Urgency Level</label>
+            <div class="urgency-selector" id="urgencySelector">
+              <div class="urgency-opt" data-value="low"    onclick="selectUrgency('low')">🟢 Low</div>
+              <div class="urgency-opt" data-value="medium" onclick="selectUrgency('medium')">🟡 Medium</div>
+              <div class="urgency-opt active" data-value="high" onclick="selectUrgency('high')">🔴 High</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>People Affected</label>
+            <input type="number" id="reqPeople" class="form-input" placeholder="e.g. 5" min="1">
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <h3>📍 Location</h3>
+        <div class="form-group"><label>City / District</label><input type="text" id="reqCity" class="form-input" placeholder="e.g. Prayagraj"></div>
+        <div class="form-group"><label>Address / Landmark</label><input type="text" id="reqAddress" class="form-input" placeholder="Nearest landmark or full address"></div>
+        <button class="btn-outline-sm" onclick="detectLocation()">📍 Use My Location</button>
+      </div>
+      <div class="form-section">
+        <h3>📎 Supporting Media</h3>
+        <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-icon">📸</div>
+          <div>Click to upload photos</div>
+          <div class="upload-sub">PNG, JPG up to 10MB</div>
+          <input type="file" id="fileInput" accept="image/*" multiple hidden onchange="previewImages(event)">
+        </div>
+        <div id="imagePreviewContainer" class="image-preview-container"></div>
+        <div class="voice-recorder">
+          <button class="voice-btn" id="voiceBtn" onclick="toggleRecording()">🎤 Record Voice Note</button>
+          <div class="voice-status" id="voiceStatus">Not recording</div>
+          <div class="voice-wave" id="voiceWave"></div>
+        </div>
+      </div>
+      <button class="btn-primary full large" onclick="submitRequest()">🚀 Submit Help Request</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ DONATE ══════════════ -->
+<div id="page-donate" class="page">
+  <div class="inner-page">
+    <div class="inner-header">
+      <button class="back-btn" onclick="showPage('dashboard')">← Back</button>
+      <h1>Make a Donation</h1>
+      <p>Your contribution directly funds verified community needs.</p>
+    </div>
+    <div class="donate-layout">
+      <div class="donate-form-card">
+        <h3>💳 Donation Details</h3>
+        <div class="amount-presets">
+          <button class="amount-btn active" onclick="setAmount(500,this)">₹500</button>
+          <button class="amount-btn" onclick="setAmount(1000,this)">₹1,000</button>
+          <button class="amount-btn" onclick="setAmount(2500,this)">₹2,500</button>
+          <button class="amount-btn" onclick="setAmount(5000,this)">₹5,000</button>
+        </div>
+        <div class="form-group"><label>Custom Amount (₹)</label><input type="number" id="donationAmount" class="form-input" value="500" min="10"></div>
+        <div class="form-group">
+          <label>Donate Towards</label>
+          <select class="form-input" id="donationCategory">
+            <option>🍛 Food &amp; Nutrition Programs</option>
+            <option>💊 Medical Aid Camps</option>
+            <option>📚 Education Initiatives</option>
+            <option>🏠 Emergency Shelter</option>
+            <option>💧 Clean Water Projects</option>
+            <option>🌐 General Fund (AI Allocated)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Payment Method</label>
+          <div class="payment-methods">
+            <div class="payment-opt active" onclick="selectPayment(this)">📱 UPI</div>
+            <div class="payment-opt" onclick="selectPayment(this)">💳 Card</div>
+            <div class="payment-opt" onclick="selectPayment(this)">🏦 Net Banking</div>
+          </div>
+        </div>
+        <div class="form-group"><label>UPI ID</label><input type="text" class="form-input" id="upiId" placeholder="yourname@upi"></div>
+        <label class="checkbox-label"><input type="checkbox" checked id="anonDon"> Make this donation anonymous</label>
+        <button class="btn-primary full large" onclick="processDonation()" style="margin-top:1.5rem">💚 Donate Now</button>
+        <div class="tax-note">All donations are 80G tax deductible · 100% goes to beneficiaries</div>
+      </div>
+      <div class="impact-sidebar">
+        <div class="impact-card">
+          <h4>Your Impact So Far</h4>
+          <div class="impact-stats">
+            <div class="impact-stat"><div class="impact-num" id="totalDonated">₹0</div><div>Total Donated</div></div>
+            <div class="impact-stat"><div class="impact-num" id="livesCount">0</div><div>Lives Impacted</div></div>
+            <div class="impact-stat"><div class="impact-num" id="projectsCount">0</div><div>Projects</div></div>
+          </div>
+        </div>
+        <div class="impact-card">
+          <h4>Where Your Money Goes</h4>
+          <div class="fund-breakdown">
+            <div class="fund-bar"><div class="fund-label">Beneficiaries</div><div class="fund-track"><div class="fund-fill" style="width:85%"></div></div><span>85%</span></div>
+            <div class="fund-bar"><div class="fund-label">Operations</div><div class="fund-track"><div class="fund-fill green" style="width:10%"></div></div><span>10%</span></div>
+            <div class="fund-bar"><div class="fund-label">Technology</div><div class="fund-track"><div class="fund-fill yellow" style="width:5%"></div></div><span>5%</span></div>
+          </div>
+        </div>
+        <div class="impact-card">
+          <h4>Recent Donations</h4>
+          <div class="recent-donations" id="recentDonations">
+            <div class="donation-item"><span>Anonymous</span><span class="donation-amt">₹2,000</span></div>
+            <div class="donation-item"><span>Ravi K.</span><span class="donation-amt">₹500</span></div>
+            <div class="donation-item"><span>Priya S.</span><span class="donation-amt">₹5,000</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MAP ══════════════ -->
+<div id="page-map" class="page">
+  <div class="map-page">
+    <div class="map-sidebar-left">
+      <h3>🗺️ Live Needs Map</h3>
+      <p class="map-sub">Real-time community needs &amp; volunteer positions</p>
+      <div class="map-filters">
+        <div class="filter-label">Filter by Type</div>
+        <div class="map-filter-chips">
+          <div class="map-chip active" onclick="filterMapItems('all',this)">All</div>
+          <div class="map-chip" onclick="filterMapItems('food',this)">🍛 Food</div>
+          <div class="map-chip" onclick="filterMapItems('medical',this)">💊 Medical</div>
+          <div class="map-chip" onclick="filterMapItems('shelter',this)">🏠 Shelter</div>
+          <div class="map-chip" onclick="filterMapItems('emergency',this)">⚡ Emergency</div>
+        </div>
+        <div class="filter-label" style="margin-top:1rem">Filter by Urgency</div>
+        <div class="map-filter-chips">
+          <div class="map-chip active" onclick="filterMapUrgency('all',this)">All</div>
+          <div class="map-chip" onclick="filterMapUrgency('high',this)">🔴 High</div>
+          <div class="map-chip" onclick="filterMapUrgency('medium',this)">🟡 Medium</div>
+          <div class="map-chip" onclick="filterMapUrgency('low',this)">🟢 Low</div>
+        </div>
+      </div>
+      <div class="map-legend">
+        <h4>Legend</h4>
+        <div class="legend-item"><div class="legend-dot red"></div>Urgent Request</div>
+        <div class="legend-item"><div class="legend-dot yellow"></div>Medium Request</div>
+        <div class="legend-item"><div class="legend-dot green"></div>Volunteer Available</div>
+        <div class="legend-item"><div class="legend-dot blue"></div>NGO Coverage</div>
+      </div>
+      <div class="map-requests-list">
+        <h4>Open Requests</h4>
+        <div id="mapRequestsList"></div>
+      </div>
+    </div>
+    <div class="map-container">
+      <div id="leaflet-map" style="width:100%;height:100%"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ ABOUT ══════════════ -->
+<div id="page-about" class="page">
+  <div class="about-page">
+    <div class="about-hero">
+      <div class="section-label">Our Story</div>
+      <h1>We believe technology should serve humanity's most urgent needs</h1>
+      <p>Sahayak AI was born from a simple observation: help exists, need exists — but the connection between them is broken. We're fixing that.</p>
+    </div>
+    <div class="about-grid">
+      <div class="about-block"><div class="about-icon">🎯</div><h3>Our Mission</h3><p>To leverage AI and data to eliminate the coordination gap in social welfare — ensuring every call for help is heard, routed, and answered efficiently.</p></div>
+      <div class="about-block"><div class="about-icon">👁️</div><h3>Our Vision</h3><p>A future where no community request goes unanswered, where volunteers and resources flow intelligently to where they're needed most.</p></div>
+      <div class="about-block"><div class="about-icon">💎</div><h3>Our Values</h3><p>Transparency, speed, dignity, and impact. We build with privacy-first principles, ensuring sensitive data is never exposed.</p></div>
+    </div>
+    <div class="team-section">
+      <h2>The Team Behind Sahayak AI</h2>
+      <div class="team-grid">
+        <div class="team-card"><div class="team-avatar" style="background:linear-gradient(135deg,#4f46e5,#7c3aed)">M</div><div class="team-name">Mohit Kumar</div><div class="team-role">Full Stack Developer</div><div class="team-tag">💻 Frontend &amp; Backend</div></div>
+        <div class="team-card"><div class="team-avatar" style="background:linear-gradient(135deg,#22c55e,#16a34a)">N</div><div class="team-name">Nitin Singh</div><div class="team-role">Backend &amp; Database Engineer</div><div class="team-tag">🛢️ Backend + Database</div></div>
+        <div class="team-card"><div class="team-avatar" style="background:linear-gradient(135deg,#f59e0b,#d97706)">P</div><div class="team-name">Prastuti Shrivastava</div><div class="team-role">UI/UX &amp; Frontend Designer</div><div class="team-tag">🎨 Design + Frontend</div></div>
+        <div class="team-card"><div class="team-avatar" style="background:linear-gradient(135deg,#ef4444,#dc2626)">M</div><div class="team-name">Mananiy Shri</div><div class="team-role">UI/UX Designer</div><div class="team-tag">🖌️ UI &amp; UX Design</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ CONTACT ══════════════ -->
+<div id="page-contact" class="page">
+  <div class="inner-page">
+    <div class="inner-header"><h1>Get in Touch</h1><p>Have questions, want to partner, or need help? We're here.</p></div>
+    <div class="contact-layout">
+      <div class="contact-form-card">
+        <div class="form-row">
+          <div class="form-group"><label>Your Name</label><input type="text" class="form-input" id="cName" placeholder="Rahul Sharma"></div>
+          <div class="form-group"><label>Email</label><input type="email" class="form-input" id="cEmail" placeholder="you@example.com"></div>
+        </div>
+        <div class="form-group">
+          <label>Subject</label>
+          <select class="form-input" id="cSubject">
+            <option>General Inquiry</option><option>NGO Partnership</option>
+            <option>Government Collaboration</option><option>Technical Support</option>
+            <option>Media &amp; Press</option><option>Report an Issue</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Message</label><textarea class="form-input" id="cMessage" rows="6" placeholder="Tell us how we can help..."></textarea></div>
+        <button class="btn-primary full" onclick="sendMessage()">Send Message →</button>
+      </div>
+      <div class="contact-info-panel">
+        <div class="contact-info-card"><div class="contact-info-icon">📍</div><div><strong>Office</strong><div>Tech Hub, Civil Lines<br>Prayagraj, UP 211001</div></div></div>
+        <div class="contact-info-card"><div class="contact-info-icon">📧</div><div><strong>Email</strong><div>hello@sahayakai.org<br>support@sahayakai.org</div></div></div>
+        <div class="contact-info-card"><div class="contact-info-icon">📞</div><div><strong>Phone</strong><div>+91 98765 43210<br>Mon–Sat, 9AM–6PM</div></div></div>
+        <div class="contact-info-card"><div class="contact-info-icon">⚡</div><div><strong>Emergency Helpline</strong><div>1800-SAH-AYAK (toll-free)<br>24/7 for critical requests</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ ADMIN ══════════════ -->
+<div id="page-admin" class="page">
+  <div class="dashboard-layout">
+    <aside class="sidebar admin-sidebar">
+      <div class="sidebar-logo"><div class="logo-icon sm">S</div><span>Admin Panel</span></div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-nav-item active" onclick="showAdminSection('overview')">📊 Overview</div>
+        <div class="sidebar-nav-item" onclick="showAdminSection('requests')">📋 All Requests</div>
+        <div class="sidebar-nav-item" onclick="showAdminSection('users')">👥 User Activity</div>
+        <div class="sidebar-nav-item" onclick="showAdminSection('analytics')">📈 Analytics</div>
+      </nav>
+      <div class="admin-badge">🛡️ Admin Mode</div>
+      <div style="padding:1rem;border-top:1px solid var(--border);margin-top:auto">
+        <button class="sidebar-logout-btn" onclick="handleLogout()" title="Logout" style="width:100%;border-radius:var(--radius-sm);padding:.5rem">⏏ Logout</button>
+      </div>
+    </aside>
+    <main class="dashboard-main">
+      <div class="dash-topbar">
+        <div><h1 class="dash-title">Admin Control Panel</h1><p class="dash-sub">Monitoring community activity — anonymized data only</p></div>
+        <button class="btn-sm-outline" onclick="showPage('home')">← Exit Admin</button>
+      </div>
+      <div id="adminContent"></div>
+    </main>
+  </div>
+</div>
+
+<!-- ══════════════ CHATBOT ══════════════ -->
+<div class="chatbot-wrapper" id="chatbotWrapper">
+  <div class="chatbot-panel" id="chatbotPanel">
+    <div class="chatbot-header">
+      <div class="chatbot-avatar">🤖</div>
+      <div><div class="chatbot-name">Sahayak Bot</div><div class="chatbot-status">● Online</div></div>
+      <button class="chatbot-close" onclick="toggleChatbot()">×</button>
+    </div>
+    <div class="chatbot-messages" id="chatMessages">
+      <div class="chat-msg bot"><div class="chat-bubble">👋 Namaste! I'm Sahayak Bot. How can I assist you today?</div></div>
+      <div class="chat-quick-replies">
+        <button class="quick-reply" onclick="sendQuickReply('Who are you')">Who are you?</button>
+        <button class="quick-reply" onclick="sendQuickReply('How can I help')">How can I help?</button>
+        <button class="quick-reply" onclick="sendQuickReply('Show requests')">Show requests</button>
+        <button class="quick-reply" onclick="sendQuickReply('How to donate')">How to donate?</button>
+      </div>
+    </div>
+    <div class="chatbot-input-row">
+      <input type="text" id="chatInput" class="chatbot-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="chatbot-send" onclick="sendChat()">➤</button>
+    </div>
+  </div>
+  <button class="chatbot-toggle" onclick="toggleChatbot()">
+    <span>💬</span><span class="chatbot-toggle-label">Sahayak Bot</span>
+  </button>
+</div>
+
+<!-- ══════════════ TOAST + MODAL ══════════════ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+  <div class="modal" id="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+<script src="firebase-config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
